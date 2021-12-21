@@ -9,9 +9,9 @@ Workflow:
 - Load csv files in DISCO and PROM for Process Mining
 
 Music genres:
-0. Classical
-1. Anime
-2. EDM
-3. Electronica
-4. Pop
-5. Hip Hop and RnB
+1. Classical
+2. Rock
+3. EDM
+4. Electronica
+5. Pop
+6. Hip Hop and RnB
