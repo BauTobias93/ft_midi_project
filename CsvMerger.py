@@ -13,9 +13,16 @@ for f in all_filenames:
     df = pd.read_csv(f)
 
     case_id_col = []
-    for i in range(0, len(df)):
+    octave_col = []
+    note_col = []
+    for index, row in df.iterrows():
         case_id_col.append(current_case_id)
+        octave_col.append(row["note_name"][-1])
+        note_col.append(row["note_name"][:-1].replace("-", ""))
+
     df.insert(0, 'case_id', case_id_col)
+    df.insert(2, 'octave', octave_col)
+    df.insert(2, 'note', note_col)
     csv_files.append(df)
 
     current_case_id += 1
