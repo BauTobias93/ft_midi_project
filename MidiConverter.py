@@ -34,33 +34,41 @@ def convert(input_dir_name, output_dir_name):
 
     for file in os.listdir(input_dir):
         filename = os.fsdecode(file)
-        print("Processing " + filename + " in to " + filename[:-4] + ".csv")
-        assert filename.endswith(".mid"), "files must be midi files"
-        mf = music21.midi.MidiFile()
-        mf.open(input_dir_name + "/" + filename)
-        mf.read()
-        mf.close()
-        s = music21.midi.translate.midiFileToStream(mf,
-                                                    quantizePost=False).flat  # quantize is what rounds all note durations to real music note types, not needed for our application
-        df = pd.DataFrame(columns=["note_name", "start_time", "duration", "velocity", "tempo"])
-        for g in s.recurse().notes:
-            if g.isChord:
-                for pitch in g.pitches:
-                    x = music21.note.Note(pitch, duration=g.duration)
-                    x.volume.velocity = g.volume.velocity
+        file_out = os.path.join(output_dir_name, filename[:-4] + ".csv")
+        if not os.path.exists(file_out) and filename.endswith(tuple([".mid", ".MID"])):
+            try:
+                print(f"Processing {filename} into {file_out}")
 
-                    x.offset = g.offset
-                    s.insert(x)
-        # ALERT: assumes only one tempo
-        note_tempo = s.metronomeMarkBoundaries()[0][2].number
-        for note in s.recurse().notes:
-            if note.isNote:
-                new_df = pd.DataFrame([[note.pitch, round(float(note.offset), 3), round(note.duration.quarterLength, 3),
-                                        note.volume.velocity, note_tempo]],
-                                      columns=["note_name", "start_time", "duration", "velocity", "tempo"])
+                mf = music21.midi.MidiFile()
+                mf.open(input_dir_name + "/" + filename)
+                mf.read()
+                mf.close()
+                s = music21.midi.translate.midiFileToStream(mf,
+                                                            quantizePost=False).flat  # quantize is what rounds all note durations to real music note types, not needed for our application
+                df = pd.DataFrame(columns=["note_name", "start_time", "duration", "velocity", "tempo"])
+                for g in s.recurse().notes:
+                    if g.isChord:
+                        for pitch in g.pitches:
+                            x = music21.note.Note(pitch, duration=g.duration)
+                            x.volume.velocity = g.volume.velocity
 
-                df = df.append(new_df, ignore_index=True)
+                            x.offset = g.offset
+                            s.insert(x)
+                # ALERT: assumes only one tempo
+                note_tempo = s.metronomeMarkBoundaries()[0][2].number
+                for note in s.recurse().notes:
+                    if note.isNote:
+                        new_df = pd.DataFrame([[note.pitch, round(float(note.offset), 3), round(note.duration.quarterLength, 3),
+                                                note.volume.velocity, note_tempo]],
+                                              columns=["note_name", "start_time", "duration", "velocity", "tempo"])
 
-        df.to_csv(output_dir_name + "/" + filename[:-4] + ".csv")
+                        df = df.append(new_df, ignore_index=True)
+
+                df.to_csv(output_dir_name + "/" + filename[:-4] + ".csv")
+            except:
+                print(f"{file_out} failed.")
+                pass
+        else:
+            print(f"{filename} already exists or is not a valid midi file.")
 
     print("Done creating csvs!")
