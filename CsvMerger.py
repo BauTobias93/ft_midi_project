@@ -8,14 +8,17 @@ def truncate(num, n):
     return float(integer)
 
 
-os.chdir('csv_files')
-all_filenames = [i for i in glob.glob('*.{}'.format('csv'))]
+PATH = "C:/Users/preis/Documents/FT/ft_midi_project/csv_files"
+EXT = "*.csv"
+all_csv_files = [file
+                 for path, subdir, files in os.walk(PATH)
+                 for file in glob.glob(os.path.join(path, EXT))]
 
 csv_files = []
 
 current_case_id = 0
 
-for f in all_filenames:
+for f in all_csv_files:
     df = pd.read_csv(f)
 
     case_id_col = []
@@ -38,5 +41,4 @@ for f in all_filenames:
 
 combined_csv = pd.concat(csv_files)
 combined_csv.rename({'Unnamed: 0': 'note'}, axis=1, inplace=True)
-os.chdir('../csv_files_merged')
-combined_csv.to_csv("combined_csv.csv", index=False, encoding='utf-8-sig')
+combined_csv.to_csv("csv_files_merged/combined_csv.csv", index=False, encoding='utf-8-sig')
