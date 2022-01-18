@@ -19,6 +19,7 @@ csv_files = []
 current_case_id = 0
 
 for f in all_csv_files:
+    print(f)
     df = pd.read_csv(f)
 
     case_id_col = []
