@@ -1,5 +1,8 @@
+import datetime
 import os
 import glob
+from time import strftime
+
 import pandas as pd
 import re
 import random
@@ -44,7 +47,7 @@ for f in all_csv_files:
         case_id_col.append(current_case_id)
         octave_col.append(row["note_name"][-1])
         note_col.append(row["note_name"][:-1].replace("-", ""))
-        real_time_col.append(truncate((row["start_time"] / (row["tempo"] / 60)), 2))
+        real_time_col.append(pd.to_datetime(truncate((row["start_time"] / (row["tempo"] / 60)), 2), unit="s"))
         genre_col.append(genre)
         song_name_col.append(song_name)
 
