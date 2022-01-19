@@ -13,7 +13,7 @@ def truncate(num, n):
     return float(integer)
 
 
-PATH = "C:/Users/preis/Documents/FT/ft_midi_project/csv_files"
+PATH = "C:\\Users\\preis\\Documents\\FT\\ft_midi_project\\csv_files"
 EXT = "*.csv"
 all_csv_files = [file
                  for path, subdir, files in os.walk(PATH)
@@ -24,6 +24,12 @@ csv_files = []
 current_case_id = 0
 pattern = re.compile(r"(.*)\\(.*)\\(.*).csv")
 songs_pre_genre = {}
+
+#handle prioritised files
+priority = ["C:\\Users\\preis\\Documents\\FT\\ft_midi_project\\csv_files\\classic\\haydn_33_1.csv"]
+for file in priority:
+    all_csv_files.insert(0, file)
+
 for f in all_csv_files:
     print(f)
     df = pd.read_csv(f)
